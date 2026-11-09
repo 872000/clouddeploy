@@ -1,0 +1,39 @@
+# Sample clouddeploy config: one app, both providers.
+# Works end-to-end in dry-run out of the box:
+#   python -m clouddeploy -c examples/sample.yaml validate
+#   python -m clouddeploy -c examples/sample.yaml plan --provider azure
+#   python -m clouddeploy -c examples/sample.yaml plan --provider aws
+#
+# The AWS account id (123456789012) and subnet/security-group ids below are
+# placeholders. Replace them with your own values before a real deploy.
+
+app:
+  name: hello-cloud
+  image: hello-cloud:latest
+  port: 8080
+  cpu: 0.5
+  memory: 1Gi
+  replicas: 1
+  # Docker build context, relative to where you run clouddeploy.
+  context: sample-app
+  env:
+    MESSAGE: "Hello from clouddeploy"
+    APP_NAME: hello-cloud
+
+azure:
+  resource_group: clouddeploy-rg
+  location: canadacentral
+  environment: clouddeploy-env
+  # container_app defaults to app.name when omitted.
+
+aws:
+  region: ca-central-1
+  cluster: clouddeploy-cluster
+  service: hello-cloud
+  execution_role_arn: arn:aws:iam::123456789012:role/ecsTaskExecutionRole
+  subnets:
+    - subnet-0123456789abcdef0
+    - subnet-0123456789abcdef1
+  security_groups:
+    - sg-0123456789abcdef0
+  assign_public_ip: ENABLED
